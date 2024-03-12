@@ -20,10 +20,10 @@ def contourDetection(cap):
     mask = np.zeros_like(edged)
     # only focus lower half of the screen
     polygon = np.array([[
-        (int(width * 0.001), int(height * 0.70)),  # Bottom-left point
-        (int(width * 0.36), int(height * 0.32)),  # Top-left point
-        (int(width * 0.58), int(height * 0.32)),  # Top-right point
-        (int(width * 0.999), int(height * 0.70)),  # Bottom-right point
+        (int(width * 0.35), int(height * 0.90)),  # Bottom-left point
+        (int(width * 0.48), int(height * 0.72)),  # Top-left point
+        (int(width * 0.58), int(height * 0.72)),  # Top-right point
+        (int(width * 0.8), int(height * 0.90)),  # Bottom-right point
     ]], np.int32)
 
     cv2.fillPoly(mask, polygon, 255)
@@ -53,4 +53,4 @@ def contourDetection(cap):
 
     # display frame
 
-    return cv2.imshow('Contours', frame), cv2.imshow('mask', roi)
+    return cv2.imshow('Contours', frame), cv2.imshow('mask', mask), cv2.imshow('roi',roi)
