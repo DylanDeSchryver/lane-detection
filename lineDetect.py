@@ -16,30 +16,34 @@ def contourDetection(cap):
     # Find Canny edges
     edged = cv2.Canny(blurred, 30, 200)
 
-    height, width = edged.shape
-    mask = np.zeros_like(edged)
-    # only focus lower half of the screen
-    polygon = np.array([[
-        (int(width * 0.35), int(height * 0.90)),  # Bottom-left point
-        (int(width * 0.48), int(height * 0.72)),  # Top-left point
-        (int(width * 0.58), int(height * 0.72)),  # Top-right point
-        (int(width * 0.8), int(height * 0.90)),  # Bottom-right point
-    ]], np.int32)
-
-    cv2.fillPoly(mask, polygon, 255)
-    roi = cv2.bitwise_and(edged, mask)
-
     # Perspective transform
-    pts1 = np.float32([[(int(width * 0.35), int(height * 0.90))], [(int(width * 0.48), int(height * 0.72))],
-                       [(int(width * 0.58), int(height * 0.72))], [(int(width * 0.8), int(height * 0.90))]])
-    pts2 = np.float32([[0,0], [500,600],
-                       [(int(width * 0.58), int(height * 0.72))], [(int(width * 0.8), int(height * 0.90))]])
+    pts1 = np.float32([[570, 490], [740, 490],
+                       [500, 700], [1100, 700]])
+    for val in pts1:
+        cv2.circle(frame, (int(val[0]), int(val[1])), 5, (0, 255, 0), -1)
+
+    pts2 = np.float32([[570, 0], [740, 0],
+                       [500, 700], [1100, 700]])
 
     # Apply Perspective Transform Algorithm
     matrix = cv2.getPerspectiveTransform(pts1, pts2)
-    result = cv2.warpPerspective(frame, matrix, (500, 600))
+    result = cv2.warpPerspective(edged, matrix, (1200, 700))
 
+    height, width = result.shape
 
+    # only focus lower half of the screen
+    polygon = np.array([[
+        (int(width * 0), int(height * 1)),  # Bottom-left point
+        (int(width * 0.2), int(height * 0.22)),  # Top-left point
+        (int(width * 0.68), int(height * 0.22)),  # Top-right point
+        (int(width * 0.9), int(height * 1)),  # Bottom-right point
+    ]], np.int32)
+
+    mask = np.zeros_like(result)
+
+    cv2.fillPoly(mask, polygon, 255)
+
+    roi = cv2.bitwise_and(result, mask)
 
     # Finding Lines
     lines_list = []
@@ -80,4 +84,4 @@ def contourDetection(cap):
 
     # display frame
 
-    return cv2.imshow('Contours', frame), cv2.imshow('warp', result)
+    return cv2.imshow('Contours', frame), cv2.imshow('warp', result), cv2.imshow('mask',mask), cv2.imshow('roi',roi)
